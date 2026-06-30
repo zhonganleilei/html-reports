@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营销AI质检子战役报告 - 6.19-6.25投诉分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; line-height: 1.8; color: #333; background: #f0fdfa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: #0d9488; z-index: 1000; padding: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .navbar-brand { color: white; font-size: 1.1em; font-weight: 600; padding: 12px 0; }
+        .navbar-menu { display: flex; gap: 0; }
+        .navbar-menu a { color: rgba(255,255,255,0.9); text-decoration: none; padding: 12px 16px; font-size: 0.9em; transition: background 0.2s; display: block; }
+        .navbar-menu a:hover { background: rgba(255,255,255,0.15); color: white; }
+        .navbar-menu a.active { background: rgba(255,255,255,0.2); color: white; font-weight: 600; }
+        .content-wrapper { padding-top: 60px; }
+        h1 { color: #0d9488; font-size: 2em; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 3px solid #ccfbf1; }
+        h2 { color: #0d9488; font-size: 1.6em; margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid #ccfbf1; }
+        h3 { color: #2c3e50; font-size: 1.3em; margin: 25px 0 10px 0; }
+        h4 { color: #2c3e50; font-size: 1.1em; margin: 20px 0 10px 0; }
+        p { margin-bottom: 12px; text-align: justify; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95em; }
+        th { background: #0d9488; color: white; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 10px 12px; border-bottom: 1px solid #ccfbf1; }
+        tr:nth-child(even) { background: #f0fdfa; }
+        tr:hover { background: #ccfbf1; }
+        ul { margin: 10px 0 10px 20px; }
+        li { margin-bottom: 8px; }
+        blockquote { background: #fff8e6; border-left: 4px solid #f0a500; padding: 15px 20px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        strong { color: #0d9488; }
+        .highlight { background: #e8f8f0; padding: 2px 6px; border-radius: 4px; color: #27ae60; font-weight: 600; }
+        .warning { background: #fff0f0; padding: 2px 6px; border-radius: 4px; color: #e74c3c; font-weight: 600; }
+        .up { color: #e74c3c; font-weight: 600; }
+        .down { color: #1890ff; font-weight: 600; }
+        .section-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; margin-bottom: 10px; }
+        .badge-violation { background: #fef3c7; color: #92400e; }
+        .badge-complaint { background: #ccfbf1; color: #0d9488; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+        .kpi-card { background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; }
+        .kpi-card .kpi-value { font-size: 2em; font-weight: 700; margin: 8px 0; }
+        .kpi-card .kpi-label { font-size: 0.9em; opacity: 0.9; }
+        .section-divider { height: 4px; background: linear-gradient(90deg, #0d9488, #14b8a6, #0d9488); border-radius: 2px; margin: 40px 0; }
+        .chart-container { position: relative; height: 350px; margin: 20px 0; }
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .note { color: #666; font-size: 0.9em; font-style: italic; margin: 10px 0; }
+        .red-bold { color: #e74c3c; font-weight: bold; }
+        .target-card { background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 8px; padding: 16px 20px; margin: 15px 0; }
+        .target-card h4 { color: #0d9488; margin-bottom: 10px; }
+        .target-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ccfbf1; }
+        .target-item:last-child { border-bottom: none; }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.3em; }
+            .navbar-menu { display: none; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-brand">营销AI质检子战役报告</div>
+            <div class="navbar-menu">
+                <a href="#report-detail" class="active">🔍 违规数据分析</a>
+                <a href="#complaint">📋 投诉数据分析</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="container">
+            <h1>营销AI质检子战役报告</h1>
+            <p style="color: #666; font-size: 0.95em;">本周期：2026年6月19日 - 6月25日 | 环比对比周期（上期）：2026年6月12日 - 6月18日 | AI质检规则：保费误导（保费/保单不知情）</p>
+
+            <div id="report-detail">
+                <span class="section-badge badge-violation">🔍 违规数据分析</span>
+                
+                <h2>一、AI质检违规情况</h2>
+                
+                <div class="target-card">
+                    <h4>📌 目标值</h4>
+                    <div class="target-item">
+                        <span>硬性指标：保费误导最新违规率</span>
+                        <span><strong>≤ 0.5%</strong>（年累计）</span>
+                    </div>
+                    <div class="target-item">
+                        <span>参考指标：保费误导最初违规率</span>
+                        <span><strong>≤ 10%</strong>（年累计）</span>
+                    </div>
+                </div>
+
+                <h3>1.1 各事业部违规数据汇总</h3>
+                <table>
+                    <tr><th>事业部</th><th>最初违规率（本期）</th><th>最新违规率（本期）</th><th>质检总量（本期）</th><th>最新违规量（本期）</th><th>2026全年最新违规率</th><th>2026全年最初违规率</th></tr>
+                    <tr><td><strong>健康险</strong></td><td>4.40%</td><td>1.60%</td><td>6,099</td><td>99</td><td><strong>0.60%</strong></td><td>7.30%</td></tr>
+                    <tr><td><strong>直营</strong></td><td>3.50%</td><td>1.10%</td><td>12,279</td><td>139</td><td>0.30%</td><td>3.60%</td></tr>
+                    <tr><td><strong>开平</strong></td><td>4.40%</td><td>1.10%</td><td>2,207</td><td>24</td><td><span style="color: #e74c3c; font-weight: bold;">1.10%</span></td><td><span style="color: #e74c3c; font-weight: bold;">15.20%</span></td></tr>
+                    <tr><td><strong>数生</strong></td><td>4.30%</td><td>1.80%</td><td>280</td><td>5</td><td><span style="color: #e74c3c; font-weight: bold;">0.70%</span></td><td>3.00%</td></tr>
+                    <tr><td><strong>金融</strong></td><td>4.20%</td><td>0.70%</td><td>142</td><td>1</td><td>0.10%</td><td>5.80%</td></tr>
+                    <tr style="background: #f0fdfa; font-weight: bold;"><td>汇总</td><td>3.90%</td><td>1.30%</td><td>21,007</td><td>268</td><td><span style="color: #e74c3c; font-weight: bold;">0.50%</span></td><td><span style="color: #e74c3c; font-weight: bold;">6.60%</span></td></tr>
+                </table>
+                
+                <h3>1.2 最初违规率最高的10个项目</h3>
+                <table>
+                    <tr><th>排名</th><th>事业部</th><th>坐席项目名称</th><th>质检量</th><th>最初违规率</th></tr>
+                    <tr><td>1</td><td>开平</td><td>ZJ私域业务</td><td>8</td><td><span style="color: #e74c3c; font-weight: bold;">25.0%</span></td></tr>
+                    <tr><td>2</td><td>健康险</td><td>昆山二项目</td><td>15</td><td><span style="color: #e74c3c; font-weight: bold;">20.0%</span></td></tr>
+                    <tr><td>3</td><td>健康险</td><td>暖哇项目</td><td>484</td><td>9.5%</td></tr>
+                    <tr><td>4</td><td>直营</td><td>光兴项目</td><td>1149</td><td>8.8%</td></tr>
+                    <tr><td>5</td><td>直营</td><td>和讯达项目</td><td>986</td><td>8.4%</td></tr>
+                    <tr><td>6</td><td>开平</td><td>ZJ业务</td><td>117</td><td>7.7%</td></tr>
+                    <tr><td>7</td><td>健康险</td><td>昆山项目</td><td>1220</td><td>7.5%</td></tr>
+                    <tr><td>8</td><td>开平</td><td>LT小B业务组</td><td>14</td><td>7.1%</td></tr>
+                    <tr><td>9</td><td>开平</td><td>HZ业务</td><td>1218</td><td>5.7%</td></tr>
+                    <tr><td>10</td><td>直营</td><td>昆山复购项目</td><td>205</td><td>4.9%</td></tr>
+                </table>
+
+                <h3>1.3 最初违规率最高的10个团队</h3>
+                <table>
+                    <tr><th>排名</th><th>事业部</th><th>坐席团队名称</th><th>质检量</th><th>最初违规率</th></tr>
+                    <tr><td>1</td><td>健康险</td><td>鲁杨组</td><td>6</td><td><span style="color: #e74c3c; font-weight: bold;">33.3%</span></td></tr>
+                    <tr><td>2</td><td>健康险</td><td>陶志强电话组</td><td>8</td><td><span style="color: #e74c3c; font-weight: bold;">25.0%</span></td></tr>
+                    <tr><td>3</td><td>开平</td><td>AL六组</td><td>10</td><td><span style="color: #e74c3c; font-weight: bold;">10.0%</span></td></tr>
+                    <tr><td>4</td><td>直营</td><td>董倩倩组</td><td>38</td><td>7.9%</td></tr>
+                    <tr><td>5</td><td>开平</td><td>LT小B业务一组</td><td>14</td><td>7.1%</td></tr>
+                    <tr><td>6</td><td>开平</td><td>YC七组</td><td>117</td><td>9.4%</td></tr>
+                    <tr><td>7</td><td>健康险</td><td>王建兴客服组</td><td>230</td><td>10.0%</td></tr>
+                    <tr><td>8</td><td>健康险</td><td>GJ1四区一部2组</td><td>120</td><td>11.7%</td></tr>
+                    <tr><td>9</td><td>直营</td><td>戴丽丽组</td><td>110</td><td>6.4%</td></tr>
+                    <tr><td>10</td><td>健康险</td><td>祁媛媛组</td><td>243</td><td>11.9%</td></tr>
+                </table>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div id="complaint">
+                <span class="section-badge badge-complaint">📋 投诉数据分析</span>
+
+                <h2>二、投诉数据概览</h2>
+                <p><strong>投诉日期周期：2026年6月19日至6月25日</strong> | 环比周期：2026年6月12日至6月18日</p>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">本期总投诉量</div>
+                        <div class="kpi-value">210</div>
+                        <div class="kpi-label">条 <span class="down">环比-11.0%</span></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">上期总投诉量</div>
+                        <div class="kpi-value">236</div>
+                        <div class="kpi-label">条</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">本期涉及坐席</div>
+                        <div class="kpi-value">199</div>
+                        <div class="kpi-label">人</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">本期命中监管红线</div>
+                        <div class="kpi-value">14</div>
+                        <div class="kpi-label">条</div>
+                    </div>
+                </div>
+
+                <h3>2.1 投诉量趋势</h3>
+                <h4>按日期分布（折线图）</h4>
+                <div class="chart-container">
+                    <canvas id="dateTrendChart"></canvas>
+                </div>
+
+                <h4>投诉按质检任务创建月份分布</h4>
+                <table>
+                    <tr><th>月份</th><th>上期(6.12-6.18)</th><th>本期(6.19-6.25)</th><th>变化</th><th>趋势</th></tr>
+                    <tr><td>2025-09</td><td>7</td><td>5</td><td><span class="down">-2</span></td><td>⬇️ 下降</td></tr>
+                    <tr><td>2025-10</td><td>3</td><td>0</td><td><span class="down">-3</span></td><td>⬇️ 下降</td></tr>
+                    <tr><td>2025-11</td><td>8</td><td>12</td><td><span class="up">+4</span></td><td>⬆️ 上升</td></tr>
+                    <tr><td>2025-12</td><td>12</td><td>10</td><td><span class="down">-2</span></td><td>⬇️ 下降</td></tr>
+                    <tr><td>2026-01</td><td>18</td><td>13</td><td><span class="down">-5</span></td><td>⬇️ 下降</td></tr>
+                    <tr><td>2026-02</td><td>16</td><td>18</td><td><span class="up">+2</span></td><td>⬆️ 上升</td></tr>
+                    <tr><td>2026-03</td><td>40</td><td>31</td><td><span class="down">-9</span></td><td>🔴 高峰</td></tr>
+                    <tr><td>2026-04</td><td>37</td><td>31</td><td><span class="down">-6</span></td><td>🔴 高峰</td></tr>
+                    <tr><td>2026-05</td><td>56</td><td>49</td><td><span class="down">-7</span></td><td>🔴 高峰</td></tr>
+                    <tr><td>2026-06</td><td>14</td><td>24</td><td><span class="up">+10</span></td><td>⬆️ 上升</td></tr>
+                </table>
+
+                <blockquote>
+                    <strong>提示</strong>：本期分析周期（6.19-6.25）的投诉高峰为2026-05、2026-03、2026-04月出单保单，合计111条，占本期总量的52.9%，需重点关注该时段的业务动作。
+                </blockquote>
+
+                <h2>三、事业部维度分析</h2>
+                <p class="note">💡 投诉类型划分根据客户诉点总结而出</p>
+                
+                <h3>3.1 投诉量事业部分布（环比）</h3>
+                <table>
+                    <tr><th>事业部</th><th>上期(6.12-6.18)</th><th>本期(6.19-6.25)</th><th>变化</th><th>环比</th></tr>
+                    <tr><td><strong>直营</strong></td><td>94</td><td>73</td><td><span class="down">-21</span></td><td><span class="down">-22.3%</span></td></tr>
+                    <tr><td><strong>健康险</strong></td><td>80</td><td>73</td><td><span class="down">-7</span></td><td><span class="down">-8.8%</span></td></tr>
+                    <tr><td><strong>开平</strong></td><td>35</td><td>37</td><td><span class="up">+2</span></td><td><span class="up">+5.7%</span></td></tr>
+                    <tr><td><strong>数生</strong></td><td>24</td><td>25</td><td><span class="up">+1</span></td><td><span class="up">+4.2%</span></td></tr>
+                    <tr><td><strong>金融</strong></td><td>3</td><td>2</td><td><span class="down">-1</span></td><td><span class="down">-33.3%</span></td></tr>
+                    <tr style="background: #f0fdfa; font-weight: bold;"><td>汇总</td><td>236</td><td>210</td><td class="down">-26</td><td class="down">-11.0%</td></tr>
+                </table>
+
+                <h3>3.2 投诉类型分布（环比）</h3>
+                <table>
+                    <tr><th>排名</th><th>投诉类型</th><th>上期</th><th>本期</th><th>变化</th><th>环比</th><th>涉及事业部（本期）</th><th>主要表现</th></tr>
+                    <tr><td>1</td><td><strong>理赔</strong></td><td>92</td><td>86</td><td><span class="down">-6</span></td><td><span class="down">-6.5%</span></td><td>健康险(39)、直营(23)、开平(10)、数生(13)、金融(1)</td><td>拒赔、赔付金额争议、条款不认可</td></tr>
+                    <tr><td>2</td><td><strong>保单保全</strong></td><td>47</td><td>30</td><td><span class="down">-17</span></td><td><span class="down">-36.2%</span></td><td>健康险(5)、直营(9)、开平(7)、数生(8)、金融(1)</td><td>退保、扣费、不知情投保</td></tr>
+                    <tr><td>3</td><td><strong>投保</strong></td><td>34</td><td>27</td><td><span class="down">-7</span></td><td><span class="down">-20.6%</span></td><td>健康险(5)、直营(15)、开平(3)、数生(4)</td><td>投保争议、责任告知不清</td></tr>
+                    <tr><td>4</td><td><strong>企微管家服务</strong></td><td>25</td><td>27</td><td><span class="up">+2</span></td><td><span class="up">+8.0%</span></td><td>健康险(10)、直营(12)、开平(5)</td><td>管家不回复、服务不到位</td></tr>
+                    <tr><td>5</td><td><strong>批改批退</strong></td><td>14</td><td>11</td><td><span class="down">-3</span></td><td><span class="down">-21.4%</span></td><td>直营(2)、开平(9)</td><td>批改争议、退保损失</td></tr>
+                    <tr><td>6</td><td><strong>安抚金</strong></td><td>12</td><td>7</td><td><span class="down">-5</span></td><td><span class="down">-41.7%</span></td><td>健康险(5)、直营(1)、开平(1)</td><td>退保金额不满、补偿协商</td></tr>
+                    <tr><td>7</td><td><strong>增值服务</strong></td><td>5</td><td>10</td><td><span class="up">+5</span></td><td><span class="up">+100.0%</span></td><td>健康险(6)、直营(3)、开平(1)</td><td>垫付争议、既往症</td></tr>
+                    <tr><td>8</td><td><strong>续保</strong></td><td>1</td><td>5</td><td><span class="up">+4</span></td><td><span class="up">+400.0%</span></td><td>直营(5)</td><td>续保政策疑问</td></tr>
+                    <tr><td>9</td><td><strong>营销</strong></td><td>4</td><td>5</td><td><span class="up">+1</span></td><td><span class="up">+25.0%</span></td><td>健康险(3)、直营(1)、开平(1)</td><td>误导消费、欺诈</td></tr>
+                    <tr><td>10</td><td><strong>其他</strong></td><td>1</td><td>1</td><td><span class="down">0</span></td><td><span class="down">0.0%</span></td><td>直营(1)</td><td>医院范围争议</td></tr>
+                </table>
+
+                <p><strong>各事业部特点：</strong></p>
+                <ul>
+                    <li><strong>【直营事业部】</strong>投诉量下降22.3%，为各事业部下降幅度最大，理赔类投诉占比31.5%</li>
+                    <li><strong>【健康险事业部】</strong>投诉量下降8.8%，理赔类投诉占比53.4%，为各事业部最高</li>
+                    <li><strong>【开平事业部】</strong>投诉量逆势上升5.7%，批改批退类投诉占比24.3%</li>
+                    <li><strong>【数生事业部】</strong>投诉量微增4.2%，理赔和保单保全类投诉集中——全部来自宠物业务</li>
+                    <li><strong>【金融事业部】</strong>本期2条投诉，以理赔和保单保全为主</li>
+                </ul>
+
+                <h2>四、人员维度分析</h2>
+                <h3>4.1 高频投诉坐席（≥2次）</h3>
+                <table>
+                    <tr><th>坐席姓名</th><th>上期投诉</th><th>本期投诉</th><th>变化</th><th>所属事业部</th></tr>
+                    <tr><td>程东方</td><td>0</td><td>3</td><td class="up">+3</td><td>数生</td></tr>
+                    <tr><td>林琳</td><td>0</td><td>3</td><td class="up">+3</td><td>健康险</td></tr>
+                    <tr><td>陆艳</td><td>0</td><td>3</td><td class="up">+3</td><td>健康险</td></tr>
+                    <tr><td>邱明伟</td><td>0</td><td>3</td><td class="up">+3</td><td>直营</td></tr>
+                    <tr><td>柴斌</td><td>0</td><td>2</td><td class="up">+2</td><td>直营</td></tr>
+                    <tr><td>张君凡-私域</td><td>0</td><td>2</td><td class="up">+2</td><td>开平</td></tr>
+                    <tr><td>谢晓辉</td><td>0</td><td>2</td><td class="up">+2</td><td>健康险</td></tr>
+                    <tr><td>王钰洁-私域</td><td>0</td><td>2</td><td class="up">+2</td><td>开平</td></tr>
+                    <tr><td>王策屿</td><td>0</td><td>2</td><td class="up">+2</td><td>健康险</td></tr>
+                    <tr><td>张美娟</td><td>0</td><td>2</td><td class="up">+2</td><td>直营</td></tr>
+                    <tr><td>桂苏铭</td><td>0</td><td>2</td><td class="up">+2</td><td>开平</td></tr>
+                    <tr><td>张海斌</td><td>0</td><td>2</td><td class="up">+2</td><td>直营</td></tr>
+                    <tr><td>倪苏豫</td><td>0</td><td>2</td><td class="up">+2</td><td>健康险</td></tr>
+                    <tr><td>王俊</td><td>0</td><td>2</td><td class="up">+2</td><td>健康险</td></tr>
+                    <tr><td>刘鑫</td><td>0</td><td>2</td><td class="up">+2</td><td>直营</td></tr>
+                </table>
+
+                <blockquote>
+                    <strong>说明</strong>：本期210条投诉涉及199名坐席，其中10人出现2次及以上投诉，其中程东方、林琳、陆艳、邱明伟各出现3次投诉，需重点关注。其余人员投诉分布较为分散。
+                </blockquote>
+
+                <h3>4.2 投诉量TOP团队（环比）</h3>
+                <table>
+                    <tr><th>排名</th><th>团队名称</th><th>上期</th><th>本期</th><th>变化</th><th>所属事业部</th></tr>
+                    <tr><td>1</td><td>高昌俊电话组</td><td>3</td><td>7</td><td class="up">+4</td><td>健康险</td></tr>
+                    <tr><td>2</td><td>KS-6组</td><td>4</td><td>7</td><td class="up">+3</td><td>健康险</td></tr>
+                    <tr><td>3</td><td>KS-5组</td><td>8</td><td>6</td><td class="down">-2</td><td>健康险</td></tr>
+                    <tr><td>4</td><td>SH-3组</td><td>5</td><td>6</td><td class="up">+1</td><td>健康险</td></tr>
+                    <tr><td>5</td><td>周艳电话组</td><td>3</td><td>6</td><td class="up">+3</td><td>直营</td></tr>
+                    <tr><td>6</td><td>辛静组</td><td>4</td><td>6</td><td class="up">+2</td><td>直营</td></tr>
+                    <tr><td>7</td><td>张勋组</td><td>3</td><td>5</td><td class="up">+2</td><td>直营</td></tr>
+                    <tr><td>8</td><td>GJ2项目一区一部1组</td><td>3</td><td>5</td><td class="up">+2</td><td>健康险</td></tr>
+                    <tr><td>9</td><td>产品创新电话组</td><td>7</td><td>5</td><td class="down">-2</td><td>健康险</td></tr>
+                    <tr><td>10</td><td>SH-1组</td><td>8</td><td>5</td><td class="down">-3</td><td>健康险</td></tr>
+                </table>
+
+                <h2>五、项目维度分析</h2>
+                <h3>5.1 投诉量TOP项目（环比）</h3>
+                <table>
+                    <tr><th>排名</th><th>项目名称</th><th>上期</th><th>本期</th><th>变化</th><th>环比</th><th>所属事业部</th></tr>
+                    <tr style="color: #e74c3c; font-weight: bold;"><td>1</td><td>宠物业务</td><td>24</td><td>25</td><td class="up">+1</td><td class="up">+4.2%</td><td>数生</td></tr>
+                    <tr style="color: #e74c3c; font-weight: bold;"><td>2</td><td>昆山项目</td><td>24</td><td>22</td><td class="down">-2</td><td class="down">-8.3%</td><td>健康险</td></tr>
+                    <tr style="color: #e74c3c; font-weight: bold;"><td>3</td><td>HZ业务</td><td>23</td><td>21</td><td class="down">-2</td><td class="down">-8.7%</td><td>开平</td></tr>
+                    <tr><td>4</td><td>合肥项目</td><td>43</td><td>19</td><td class="down">-24</td><td class="down">-55.8%</td><td>直营</td></tr>
+                    <tr><td>5</td><td>合肥区部</td><td>14</td><td>18</td><td class="up">+4</td><td class="up">+28.6%</td><td>直营</td></tr>
+                    <tr><td>6</td><td>上海项目</td><td>17</td><td>15</td><td class="down">-2</td><td class="down">-11.8%</td><td>健康险</td></tr>
+                    <tr><td>7</td><td>共建项目</td><td>15</td><td>14</td><td class="down">-1</td><td class="down">-6.7%</td><td>健康险</td></tr>
+                    <tr><td>8</td><td>HZ私域业务</td><td>0</td><td>13</td><td class="up">+13</td><td class="up">新增</td><td>开平</td></tr>
+                    <tr><td>9</td><td>和讯达项目</td><td>13</td><td>12</td><td class="down">-1</td><td class="down">-7.7%</td><td>直营</td></tr>
+                    <tr><td>10</td><td>光兴项目</td><td>11</td><td>11</td><td class="up">0</td><td class="up">0.0%</td><td>直营</td></tr>
+                </table>
+
+                <blockquote>
+                    <strong>提示</strong>：合肥项目投诉量环比大幅下降55.8%，整改效果显著；HZ私域业务本期新增13条投诉，需重点关注。
+                </blockquote>
+
+                <h2>六、投诉经典案例</h2>
+                <div class="case-section">
+    <h3>案例一：坐席未告知绿通服务使用限制，夸大服务适用范围引发投诉</h3>
+    <p><strong>工单号：120260645921-直营</strong></p>
+    
+    <table>
+        <tr><th style="background: #0d9488; color: white;">项目</th><th style="background: #0d9488; color: white;">内容</th></tr>
+        <tr><td><strong>保单产品</strong></td><td>尊享e生·中高端医疗保险PLUS（2025版）（计划二年缴版）</td></tr>
+        <tr><td><strong>投诉内容</strong></td><td>用户来电表示，之前销售人员表示绿通服务什么病都可以使用，现在因孩子感冒发烧无法使用绿通服务，用户表示现在要求使用绿通服务，不认可只有特定疾病才有绿通服务，表示如果不能使用要求全额退款并赔偿用户所有损失。</td></tr>
+    </table>
+    
+    <h4>【案件概况】</h4>
+    <p>2026-02-26 15:27:19</p>
+    <p><strong>客户：</strong><span style="color: #e74c3c; font-weight: bold;">重点我需要问一下有绿色通道吗？需要住院的话得多久能住进去（北京儿童医院国际部或者特需的）。</span></p>
+    <p><strong>坐席：</strong>你说的那个北京儿童医院国际医疗部，这个是是那个南里顺路那个吗？</p>
+    <p><strong>客户：</strong>对。大概跟你说一下，<span style="color: #e74c3c; font-weight: bold;">是因为我们孩子前两天感冒了</span>，然后就是遇到需要住院的情况，然后就遇到了这个问题。所以我们才想着给他买一个就是类似的保险，<span style="color: #e74c3c; font-weight: bold;">因为那个医院不好住，然后我们当时是排号没排上</span>。所以我们这点对于我们来说还是比较重要的。</p>
+    <p><strong>坐席：</strong><span style="color: #22272E;">我我我明白了，你这个情况的话只能选那种，我不知道你有没有了解过，你这个情况只能选我们那个叫尊享宝贝少儿高端医疗，只有这款是可以的。（最终推荐的是尊享e生·中高端医疗保险PLUS（2025版））</span></p>
+    <p><strong>客户：</strong><span style="color: #22272E;">只是我们大概就是这种医院，就类似的医院，大概多久能住进去？</span></p>
+    <p><strong>坐席：</strong><span style="color: #22272E;">门诊的话，我们是可以直接支付。然后住院的话，</span><span style="color: #e74c3c; font-weight: bold;">提前一个工作日，我们直接给你预约，到时候我们帮你预约好了，你直接过去就行了</span><span style="color: #22272E;">。</span></p>
+    <p><strong>客户：</strong><span style="color: #e74c3c; font-weight: bold;">那就是您说的那个，我们比如说我们需要住院，我们前天预约了后一天就就可以住进去，这个是可以的是吧。</span></p>
+    <p><strong>坐席：</strong><span style="color: #e74c3c; font-weight: bold;">对</span><span style="color: #22272E;">，我们这个，你必须买这个高端版，高端版的话它会有有这个服务的。</span></p>
+    
+    <div style="background: #fff8e6; border-left: 4px solid #f0a500; padding: 15px 20px; margin: 15px 0; border-radius: 0 8px 8px 0;">
+        <h4 style="color: #0d9488; font-weight: bold; margin-top: 0;">案件点评</h4>
+        <p>坐席推销少儿高端医疗绿色通道服务时，仅告知住院可提前一日预约入院，实际绿通通道仅针对重大特定疾病才支持，在客户已经明确告知孩子有感冒住院使用绿通需求时，坐席未主动告知感冒发烧类轻度疾病无法使用该绿通服务，夸大服务适用范围误导客户，客户后续因孩子感冒发烧申请绿通被拒引发投诉。</p>
+    </div>
+</div>
+
+<div class="case-section" style="margin-top: 30px;">
+    <h3>案例二：坐席不实宣传医疗险保障范围、承诺理赔，客户投保后既往症遭拒赔引发投诉</h3>
+    <p><strong>工单号：120260602023-健康险</strong></p>
+    
+    <table>
+        <tr><th style="background: #0d9488; color: white;">项目</th><th style="background: #0d9488; color: white;">内容</th></tr>
+        <tr><td><strong>保单产品</strong></td><td>全能保·住院医疗（免健告月缴尊享版）</td></tr>
+        <tr><td><strong>投诉内容</strong></td><td>客户投保时已经明确告知做过心脏支架，企微告知是可以理赔，现客户对心脏支架是既往症拒赔理赔不认可，不接受安抚，称销售坐席不实宣传，投保的时候企微销售人员告知是0免赔的，什么疾病都可以，只要过了30天就能理赔。</td></tr>
+    </table>
+    
+    <h4>【案件概况】</h4>
+    <p>企微销售人员沈寅栋在3月9日下午添加其微信后</p>
+    <p>1、告知客户现在的保险有5000元免赔额，给客户推荐0免赔保险，告知客户优化为0免赔额保险以后"就无论咱们大病小病，意外医疗，只要是去到医院住院治疗，哪怕说您花五十花一百，保险公司都要赔钱"。</p>
+    <p>2、客户咨询什么时候能报销，坐席告知过了30天就能可以。</p>
+    <p>3、坐席主动提及帮客户取消之前的5000元免赔额保险（尊享e生·中高端医疗保险2023版（普通部计划三年缴版））。客户确认是不是一个月后住院就可以报销了，坐席告知"对的"。</p>
+    
+    <p><strong>2026-03-09 15:24:27 对话：</strong></p>
+    <p><strong>坐席：</strong>那您当时办理保险的时候，咱们下面不是有一个零元起赔吗?我看您当时这个零元起赔，您这边当时怎么没有优化呢。</p>
+    <p><strong>客户：</strong>零元起赔什么意思</p>
+    <p><strong>坐席：</strong><span style="color: #e74c3c; font-weight: bold;">零元起赔就是以后咱们就没有这个免赔额了，以后就无论咱们大病小病，意外医疗，只要是去到医院住院治疗，哪怕说您花五十花一百，保险公司都要赔钱。</span></p>
+    <p><strong>客户：</strong>一年交上一百九十三，<span style="color: #e74c3c; font-weight: bold;">多长时间就住院，就可以报销。</span></p>
+    <p><strong>坐席：</strong><span style="color: #e74c3c; font-weight: bold;">三十天之后。</span></p>
+    <p><strong>坐席：</strong>您之前的保险这边就帮您取消掉，然后之前保险剩余的费用会给您退回去，然后这边给您办理新的这个</p>
+    <p><strong>客户：</strong>哦哦</p>
+    <p><strong>客户：</strong>就是说我如果要报销，<span style="color: #e74c3c; font-weight: bold;">一个月以后就可以报销对吧？</span></p>
+    <p><strong>坐席：</strong><span style="color: #e74c3c; font-weight: bold;">对的对的</span>，一个月之后去到医院住院治疗啊，去医院之前跟我讲一下啊。</p>
+    
+    <div style="background: #fff8e6; border-left: 4px solid #f0a500; padding: 15px 20px; margin: 15px 0; border-radius: 0 8px 8px 0;">
+        <h4 style="color: #0d9488; font-weight: bold; margin-top: 0;">案件点评</h4>
+        <p>坐席销售夸大 0 免赔医疗保障范围，误导客户过 30 天所有疾病均可理赔，诱导客户退保旧保单，客户心脏支架既往症出险拒赔后引发投诉。</p>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 20px auto; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px 40px; font-size: 0.85em; color: #666;">
+        <h4 style="color: #0d9488; margin-bottom: 10px;">📋 特别说明</h4>
+        <ul style="margin-left: 20px;">
+            <li>违规数据分析范围：根据事业部推送AI质检的数据分析得出（要求WD及服销场景的成交件100%推送）</li>
+            <li>数据来源：AI质检看板违规数据清单、投诉清单</li>
+            <li>投诉分析方式：根据保单业绩维度分类事业部，通过AI结合用户投诉原因分析，部分数据可能存在分类偏差，如有相关报告推送建议，请联系消保管理中心@启棒 @成雷</li>
+        </ul>
+    </div>
+
+    <script>
+        // 注册数据标签插件
+        Chart.register(ChartDataLabels);
+        
+        // 日期趋势图
+        const ctx = document.getElementById('dateTrendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['6/12', '6/13', '6/14', '6/15', '6/16', '6/17', '6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24', '6/25'],
+                datasets: [{
+                    label: '投诉量',
+                    data: [36, 21, 19, 36, 46, 30, 48, 18, 19, 19, 38, 37, 33, 46],
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#0d9488',
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        display: true,
+                        align: 'top',
+                        anchor: 'end',
+                        offset: 4,
+                        color: '#0d9488',
+                        font: { weight: 'bold', size: 12 },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
